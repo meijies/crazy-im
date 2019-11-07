@@ -1,0 +1,14 @@
+syntax = "proto3";
+option java_package = "com.meijie.proto";
+option java_outer_classname = "ImClientProtocol";
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+
+import "client_request.proto";
+
+service ImClientProtocolService {
+    rpc getMessage (MessageRequestProto) returns (ImMessageListProto);
+    rpc sendMessage (MessageSendRequestProto) returns (MessageResponseAckProto);
+    rpc getFile (FileRequestProto) returns (ImFileProto);
+    rpc sendFile (FileSendRequestProto) returns (FileResponseAckProto);
+}
