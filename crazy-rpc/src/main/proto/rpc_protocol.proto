@@ -1,0 +1,12 @@
+syntax = "proto3";
+option java_package = "com.meijie.crazy.rpc.proto";
+option java_outer_classname = "RpcProtocol";
+option java_generate_equals_and_hash = true;
+
+import "google/protobuf/any.proto";
+
+message RpcRequestHeaderProto {
+    string methodName = 1;
+    string declaringClassProtocolName = 2;
+    uint32 clientProtocolVersion = 3;
+}
