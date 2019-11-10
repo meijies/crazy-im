@@ -11,7 +11,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.meijie.crazy.rpc.ProtoProtocolRegister.ProtoNameVer;
+import static com.meijie.crazy.rpc.ProtocolRegister.ProtoNameVer;
 import static com.meijie.crazy.rpc.proto.RpcProtocol.RpcRequestHeaderProto;
 
 /**
@@ -28,7 +28,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<NettyMessage>
         RpcRequestHeaderProto requestHeader = msg.getRequestHeader();
         ProtoNameVer nameVer = new ProtoNameVer(requestHeader.getDeclaringClassProtocolName(),
                 requestHeader.getClientProtocolVersion());
-        BlockingService service = ProtoProtocolRegister.getProtocolService(nameVer);
+        BlockingService service = ProtocolRegister.getProtocolService(nameVer);
 
         MethodDescriptor methodDescriptor = service.getDescriptorForType()
                 .findMethodByName(requestHeader.getMethodName());
@@ -43,5 +43,6 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<NettyMessage>
         Message param = msg.getPayload(prototype);
 
         Message result = service.callBlockingMethod(methodDescriptor, null, param);
+        ctx.write(new NettyMessage(requestHeader, result));
     }
 }

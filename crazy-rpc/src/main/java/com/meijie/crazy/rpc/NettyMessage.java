@@ -74,7 +74,7 @@ public class NettyMessage {
                 payload.getSerializedSize() + FRAME_HEADER_LENGTH;
         ByteBuf result = allocator.directBuffer();
         result.writeInt(length);
-        result.writeInt(NettyMessageProtocol.MAGIC_NUMBER);
+        result.writeInt(CrazyNettyProtocol.MAGIC_NUMBER);
         result.writeBytes(requestHeader.toByteArray());
         result.writeBytes(payload.toByteArray());
         return result;

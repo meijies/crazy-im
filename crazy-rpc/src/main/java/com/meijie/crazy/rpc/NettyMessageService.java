@@ -1,5 +1,6 @@
 package com.meijie.crazy.rpc;
 
+import com.google.protobuf.BlockingService;
 import com.meijie.crazy.core.concurrency.Threads;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
@@ -12,6 +13,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +21,7 @@ import java.net.InetAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * A Netty Service Implement from Atomix
+ * A Netty Service Implement originally copy from Atomix
  *
  * @author meijie
  */
@@ -35,15 +37,20 @@ public class NettyMessageService {
     private Class<? extends ServerChannel> serverChannelClass;
     private Class<? extends Channel> clientChannelClass;
 
-
     public void init() {
         initEventLoopGroup();
     }
 
+    public void scanProtocolAndRegistry(String servicePackage) {
+        Reflections reflections = new Reflections(servicePackage);
+        // TODO scan the client and service implement
+    }
+
+    public void registryProtocol(String protocol, int version, BlockingService blockingService) {
+        ProtocolRegister.registry(new ProtocolRegister.ProtoNameVer(protocol, version), blockingService);
+    }
+
     public void start(Address serverAddress) throws InterruptedException {
-        // scan the protocol and cache to ProtoProtocolRegister
-
-
         if (started.compareAndSet(false, true)) {
             startServer(serverAddress);
         } else {
@@ -85,7 +92,7 @@ public class NettyMessageService {
         b.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel channel) throws Exception {
-                channel.pipeline().addLast(initServerChannelHandler());
+                channel.pipeline().addLast(CrazyNettyProtocol.initServerChannelHandler());
             }
         });
         b.localAddress(address.host(), address.port());
@@ -142,18 +149,9 @@ public class NettyMessageService {
 
             @Override
             protected void initChannel(SocketChannel channel) throws Exception {
-                channel.pipeline().addLast(initClientChannelHandler());
+                channel.pipeline().addLast(CrazyNettyProtocol.initClientChannelHandler());
             }
         });
         return bootstrap.connect();
-    }
-
-    private ChannelHandler[] initClientChannelHandler() {
-        return null;
-    }
-
-    // TODO
-    private ChannelHandler[] initServerChannelHandler() {
-        return null;
     }
 }

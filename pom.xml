@@ -29,6 +29,7 @@
         <logback.version>1.2.3</logback.version>
         <guava.version>28.1-jre</guava.version>
         <protobuf.version>3.9.2</protobuf.version>
+        <reflections.version>0.9.11</reflections.version>
     </properties>
 
     <dependencyManagement>
@@ -57,6 +58,12 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
             </dependency>
 
             <dependency>

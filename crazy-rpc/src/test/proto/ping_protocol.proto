@@ -1,0 +1,13 @@
+syntax = "proto3";
+option java_package = "com.meijie.crazy.rpc.proto";
+option java_outer_classname = "PingProtocol";
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+
+service PingService {
+    rpc sendPingRequest(PingProto) returns (PingProto);
+}
+
+message PingProto {
+    string message = 1;
+}

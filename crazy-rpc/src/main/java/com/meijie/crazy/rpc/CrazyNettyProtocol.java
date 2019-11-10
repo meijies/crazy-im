@@ -2,6 +2,7 @@ package com.meijie.crazy.rpc;
 
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
@@ -14,12 +15,12 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
  *
  * @author meijie
  */
-public class NettyMessageProtocol {
+public class CrazyNettyProtocol {
 
     static final int MAGIC_NUMBER = 0xDBCFE0FF;
 
-    public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
-        public NettyMessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength) {
+    static class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
+        public NettyMessageDecoder() {
             super(Integer.MAX_VALUE, 0, 4, -4, 4);
         }
 
@@ -38,7 +39,7 @@ public class NettyMessageProtocol {
         }
     }
 
-    public class NettyMessageEncoder extends ChannelOutboundHandlerAdapter {
+    static class NettyMessageEncoder extends ChannelOutboundHandlerAdapter {
         @Override
         public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
             if (msg instanceof NettyMessage) {
@@ -51,5 +52,21 @@ public class NettyMessageProtocol {
                 ctx.write(msg, promise);
             }
         }
+    }
+
+    public static ChannelHandler[] initServerChannelHandler() {
+        return new ChannelHandler[]{
+                new NettyMessageEncoder(),
+                new NettyMessageDecoder(),
+                new RpcRequestHandler()
+        };
+    }
+
+    public static ChannelHandler[] initClientChannelHandler() {
+        return new ChannelHandler[]{
+                new NettyMessageEncoder(),
+                new NettyMessageDecoder(),
+                new RpcRequestHandler()
+        };
     }
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author meijie
  */
-public class ProtoProtocolRegister {
+public class ProtocolRegister {
 
     private static final Map<ProtoNameVer, BlockingService> protoProtocolMap = new ConcurrentHashMap<>();
 
